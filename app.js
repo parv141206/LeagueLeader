@@ -49,7 +49,7 @@ const premierLeagueTeams = [
   "West Ham United",
   "Wolverhampton Wanderers"
 ];
-
+const PORT = process.env.PORT || 8080;
 const allTeams = [...laLigaTeams, ...premierLeagueTeams];
 app.use(cors({
   origin: "*"
@@ -121,6 +121,6 @@ function formatMatch(teams) {
   return null;
 }
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log("Server running on port 8080");
 });
