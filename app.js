@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const cors = require("cors")
 
 const app = express();
 const laLigaTeams = [
@@ -50,7 +51,11 @@ const premierLeagueTeams = [
 ];
 
 const allTeams = [...laLigaTeams, ...premierLeagueTeams];
-
+app.use(cors({
+  origin: "*"
+}
+))
+axios.defaults.protocol = 'http';
 app.get("/", async (req, res) => {
   try {
     const allFixtures = [];
