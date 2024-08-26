@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const cors = require("cors")
+const cors = require("cors");
 
 const app = express();
 const laLigaTeams = [
@@ -49,31 +49,33 @@ const premierLeagueTeams = [
   "West Ham United",
   "Wolverhampton Wanderers"
 ];
+
 const PORT = process.env.PORT || 8080;
 const allTeams = [...laLigaTeams, ...premierLeagueTeams];
-app.use(cors({
-  origin: "*"
-}
-))
-axios.defaults.protocol = 'http';
+
+app.use(cors({ origin: "*" }));
+
 app.get("/", async (req, res) => {
   try {
     const allFixtures = [];
     let url = "https://www.theguardian.com/football/fixtures";
     let clickCount = 0;
-    while (url && clickCount < 5) {
-      const { data } = await axios.get(url);
-      const $ = cheerio.load(data);
 
+    while (url && clickCount < 5) {
+      console.log("Fetching URL:", url);
+      const { data } = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        },
+        timeout: 10000 // Set a timeout for the request
+      });
+      const $ = cheerio.load(data);
       const fixtures = extractFixtures($);
       allFixtures.push(...fixtures);
 
       const moreButton = $(".football-matches__show-more");
       if (moreButton.length) {
-        url = new URL(
-          moreButton.attr("href"),
-          "https://www.theguardian.com"
-        ).toString();
+        url = new URL(moreButton.attr("href"), "https://www.theguardian.com").toString();
         clickCount++;
       } else {
         url = null;
@@ -82,7 +84,8 @@ app.get("/", async (req, res) => {
 
     res.json(allFixtures);
   } catch (error) {
-    console.error("Error fetching the HTML:", error);
+    console.error("Error fetching the HTML:", error.message);
+    console.error("Error details:", error);
     res.status(500).send("Error fetching data");
   }
 });
@@ -96,8 +99,6 @@ function extractFixtures($) {
     matches.each((matchIndex, matchElement) => {
       const time = $(matchElement).find(".football-match__status").text().trim().replace(/\s+/g, " ");
       const teams = $(matchElement).find(".football-match__teams").text().trim().replace(/\s+/g, " ");
-
-      // Logic to insert 'vs' between team names
       const formattedMatch = formatMatch(teams);
       if (formattedMatch) {
         const res = { date, time, match: formattedMatch };
@@ -120,7 +121,9 @@ function formatMatch(teams) {
   }
   return null;
 }
-
+app.get("test", (req, res) => {
+  res.send("Hello World")
+})
 app.listen(PORT, () => {
-  console.log("Server running on port 8080");
+  console.log(`Server running on port ${PORT}`);
 });
