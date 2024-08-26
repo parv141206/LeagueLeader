@@ -113,10 +113,16 @@ function extractFixtures($) {
 function formatMatch(teams) {
   for (let i = 0; i < allTeams.length; i++) {
     const team1 = allTeams[i].name;
+    const league1 = allTeams[i].league;
     for (let j = 0; j < allTeams.length; j++) {
       const team2 = allTeams[j].name;
+      const league2 = allTeams[j].league;
       if (team1 !== team2 && teams.includes(team1) && teams.includes(team2)) {
-        return `${team1} vs ${team2}`;
+        return {
+          match: `${team1} vs ${team2}`,
+          league1,
+          league2
+        };
       }
     }
   }
