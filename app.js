@@ -4,50 +4,51 @@ const cheerio = require("cheerio");
 const cors = require("cors");
 
 const app = express();
+
 const laLigaTeams = [
-  "Atlético Madrid",
-  "Real Madrid",
-  "Barcelona",
-  "Sevilla",
-  "Real Betis",
-  "Real Sociedad",
-  "Villarreal",
-  "Athletic Bilbao",
-  "Osasuna",
-  "Rayo Vallecano",
-  "Getafe",
-  "Cádiz",
-  "Celta Vigo",
-  "Espanyol",
-  "Almería",
-  "Valladolid",
-  "Girona",
-  "Mallorca",
-  "Elche",
-  "Levante"
+  { name: "Atlético Madrid", aliases: ["Atleti"], league: "LaLiga" },
+  { name: "Real Madrid", aliases: ["Los Blancos", "Madrid"], league: "LaLiga" },
+  { name: "Barcelona", aliases: ["Barça"], league: "LaLiga" },
+  { name: "Sevilla", aliases: ["Los Nervionenses"], league: "LaLiga" },
+  { name: "Real Betis", aliases: ["Los Verdiblancos"], league: "LaLiga" },
+  { name: "Real Sociedad", aliases: ["La Real"], league: "LaLiga" },
+  { name: "Villarreal", aliases: ["El Submarino Amarillo"], league: "LaLiga" },
+  { name: "Athletic Bilbao", aliases: ["Los Leones"], league: "LaLiga" },
+  { name: "Osasuna", aliases: ["Los Rojillos"], league: "LaLiga" },
+  { name: "Rayo Vallecano", aliases: ["Los Franjirrojos"], league: "LaLiga" },
+  { name: "Getafe", aliases: ["Los Azulones"], league: "LaLiga" },
+  { name: "Cádiz", aliases: ["Los Amarillos"], league: "LaLiga" },
+  { name: "Celta Vigo", aliases: ["Los Celestes"], league: "LaLiga" },
+  { name: "Espanyol", aliases: ["Los Pericos"], league: "LaLiga" },
+  { name: "Almería", aliases: ["Los Rojiblancos"], league: "LaLiga" },
+  { name: "Valladolid", aliases: ["Los Pucelanos"], league: "LaLiga" },
+  { name: "Girona", aliases: ["Los Blanquivermells"], league: "LaLiga" },
+  { name: "Mallorca", aliases: ["Los Bermellones"], league: "LaLiga" },
+  { name: "Elche", aliases: ["Los Franjiverdes"], league: "LaLiga" },
+  { name: "Levante", aliases: ["Los Granotas"], league: "LaLiga" }
 ];
 
 const premierLeagueTeams = [
-  "Arsenal",
-  "Aston Villa",
-  "Bournemouth",
-  "Brentford",
-  "Brighton",
-  "Chelsea",
-  "Crystal Palace",
-  "Everton",
-  "Fulham",
-  "Leeds United",
-  "Leicester City",
-  "Liverpool",
-  "Manchester City",
-  "Manchester United",
-  "Newcastle United",
-  "Nottingham Forest",
-  "Southampton",
-  "Tottenham Hotspur",
-  "West Ham United",
-  "Wolverhampton Wanderers"
+  { name: "Arsenal", aliases: ["The Gunners"], league: "Premier League" },
+  { name: "Aston Villa", aliases: ["Villa"], league: "Premier League" },
+  { name: "Bournemouth", aliases: ["The Cherries"], league: "Premier League" },
+  { name: "Brentford", aliases: ["The Bees"], league: "Premier League" },
+  { name: "Brighton", aliases: ["The Seagulls"], league: "Premier League" },
+  { name: "Chelsea", aliases: ["The Blues"], league: "Premier League" },
+  { name: "Crystal Palace", aliases: ["The Eagles"], league: "Premier League" },
+  { name: "Everton", aliases: ["The Toffees"], league: "Premier League" },
+  { name: "Fulham", aliases: ["The Cottagers"], league: "Premier League" },
+  { name: "Leeds United", aliases: ["The Whites"], league: "Premier League" },
+  { name: "Leicester City", aliases: ["The Foxes"], league: "Premier League" },
+  { name: "Liverpool", aliases: ["The Reds"], league: "Premier League" },
+  { name: "Manchester City", aliases: ["Man City"], league: "Premier League" },
+  { name: "Manchester United", aliases: ["Man Utd", "The Red Devils"], league: "Premier League" },
+  { name: "Newcastle United", aliases: ["The Magpies"], league: "Premier League" },
+  { name: "Nottingham Forest", aliases: ["The Reds"], league: "Premier League" },
+  { name: "Southampton", aliases: ["The Saints"], league: "Premier League" },
+  { name: "Tottenham Hotspur", aliases: ["Spurs"], league: "Premier League" },
+  { name: "West Ham United", aliases: ["The Hammers"], league: "Premier League" },
+  { name: "Wolverhampton Wanderers", aliases: ["Wolves"], league: "Premier League" }
 ];
 
 const PORT = process.env.PORT || 8080;
@@ -111,9 +112,9 @@ function extractFixtures($) {
 
 function formatMatch(teams) {
   for (let i = 0; i < allTeams.length; i++) {
-    const team1 = allTeams[i];
+    const team1 = allTeams[i].name;
     for (let j = 0; j < allTeams.length; j++) {
-      const team2 = allTeams[j];
+      const team2 = allTeams[j].name;
       if (team1 !== team2 && teams.includes(team1) && teams.includes(team2)) {
         return `${team1} vs ${team2}`;
       }
@@ -121,9 +122,11 @@ function formatMatch(teams) {
   }
   return null;
 }
-app.get("test", (req, res) => {
-  res.send("Hello World")
-})
+
+app.get("/test", (req, res) => {
+  res.send("Hello World");
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
